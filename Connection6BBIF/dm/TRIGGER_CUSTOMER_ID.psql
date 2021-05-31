@@ -1,0 +1,36 @@
+create or replace TRIGGER TRG_CUSTOMER 
+
+BEFORE DELETE OR INSERT OR UPDATE ON CUSTOMER
+FOR EACH ROW
+DECLARE
+BEGIN
+---------------------------------CREDITS----------------------------------------------------
+    IF ( :NEW.CREDITS < 0) THEN
+    RAISE_APPLICATION_ERROR(-20900, 'THE CREDIT HAS TO BE GREATER OR EQUAL TO 0');
+    END IF;
+    IF (UPDATING) THEN
+    :NEW.CREDITS := :OLD.CREDITS;
+    END IF;
+    -----------------------------------BIRTHDAY und PS SAMONTE HIER-------------------------------------------------
+IF (SYSDATE <= :NEW.birthdate) then
+    :NEW.birthdate:= :OLD.birthdate;
+    RAISE_APPLICATION_ERROR(-20901, 'The Fking Birthdate must be below the current date; The BD cannot be be Updated - No Change');
+    end if;
+
+IF (SYSDATE <= :NEW.birthdate) then
+    :NEW.birthdate:= :OLD.birthdate;
+    RAISE_APPLICATION_ERROR(-20901, 'The Fking Birthdate must be below the current date; The BD cannot be be Updated - No Change');
+    end if;
+
+---------------------------------------EMAIL---------------------------
+if (:NEW.EMAIL LIKE '' OR :NEW.EMAIL <> '_%@_%._%')Then
+    RAISE_APPLICATION_ERROR(-20902, 'The Email must contain the character @');
+    end if;
+
+
+
+
+
+
+
+END TRG_CUSTOMER ;
